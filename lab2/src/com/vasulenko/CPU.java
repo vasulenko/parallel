@@ -1,43 +1,30 @@
 package com.vasulenko;
 
+
 public class CPU extends Thread {
+    CPUProcess task;
 
-    private static final int COMPLEXITY_COEF = 100;
-
-    private String name;
-    private volatile Process currentCpuProcess;
-
-    public CPU(String name) {
-        this.name = name;
+    public CPU() {
+        task = new CPUProcess();
     }
 
-    public void loadProcess(Process process) {
-        this.currentCpuProcess = process;
+    public void setTask(CPUProcess task) {
+        this.task = task;
+    }
+
+    public CPUProcess getTask() {
+        return task;
     }
 
     @Override
     public void run() {
-        while (true) {
-            if (this.currentCpuProcess != null) {
-                runCurrentProcess();
-            }
-        }
+        while (!this.isInterrupted())
+            task.process();
     }
 
-    private void runCurrentProcess() {
-        System.out.printf("Processor [%s] start working on process [%s]...\n", name, currentCpuProcess.getPid());
-        try {
-            Thread.sleep(currentCpuProcess.getComplexity() * COMPLEXITY_COEF);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            this.currentCpuProcess = null;
-            System.out.printf("Processor [%s] stopped working on process\n", name);
-        }
-    }
-
-    public boolean isBusy() {
-        return currentCpuProcess != null;
+    public void finish() {
+        this.interrupt();
     }
 
 }
+

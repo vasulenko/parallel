@@ -1,31 +1,33 @@
 package com.vasulenko;
 
-import java.util.Random;
 
-public class CPUProcess extends Thread {
+public class CPUProcess {
+    private long processingTime;
+    boolean paused = false;
 
-    private OS os;
-    private long delay;
-    private int processCount;
-
-    public CPUProcess(OS os, long delay, int processCount) {
-        this.os = os;
-        this.processCount = processCount;
-        this.delay = delay;
+    public CPUProcess() {
+        processingTime = 10 + (long) (Math.random() * 30);
     }
 
-    @Override
-    public void run() {
-        Random random = new Random();
-        while (processCount > 0) {
-            Process process = new Process(10 + random.nextInt(90));
-            os.coordinateProcess(process);
-            try {
-                Thread.sleep(delay + random.nextInt(1000));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            processCount -= 1;
+    public void setProcessingTime(long time) {
+        if (time > 0) {
+            processingTime = time;
         }
+    }
+
+    public long getProcessingTime() {
+        return processingTime;
+    }
+
+    public boolean wasPaused() {
+        return paused;
+    }
+
+    public void pause() {
+        paused = true;
+    }
+
+    public void process() {
+        --processingTime;
     }
 }
